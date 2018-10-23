@@ -96,7 +96,7 @@ class Post
 
  
   }
-
+  // Create Post
   public function create()
   {
 
@@ -134,6 +134,78 @@ class Post
 
           return false;
         }
+
+  }
+
+  // Update Post
+  public function update()
+  {
+
+    // Create Query
+    $query = '    
+      UPDATE ' . $this->table .'
+      SET
+        title = :title,
+        body = :body,
+        author = :author,
+        category_id = :category_id
+        WHERE id = :id';
+
+        // Prepare Statement
+        $stmt = $this->conn->prepare($query);
+
+        // Clean Data
+        $this->title = htmlspecialchars(strip_tags($this->title));
+        $this->author = htmlspecialchars(strip_tags($this->author));
+        $this->body = htmlspecialchars(strip_tags($this->body));
+        $this->category_id = htmlspecialchars(strip_tags($this->category_id));
+        $this->id = htmlspecialchars(strip_tags($this->id));
+
+        // Bind Paramaters
+        $stmt->bindParam(':title',$this->title);
+        $stmt->bindParam(':body',$this->body);
+        $stmt->bindParam(':author',$this->author);
+        $stmt->bindParam(':category_id',$this->category_id);
+        $stmt->bindParam(':id',$this->id);
+
+        // Execute Query
+        if($stmt->execute())
+        {
+          return true;
+        }else{
+
+          printf('Error %s.\n',$stmt->error);
+
+          return false;
+        }
+
+  }
+
+  public function delete()
+  {
+    // Create Query
+    $query = '
+
+    DELETE FROM ' .$this->table. '
+    WHERE id=:id';
+    // Prepare Statement
+    $stmt = $this->conn->prepare($query);
+
+    // Clean Data
+    $this->id = htmlspecialchars(strip_tags($this->id));
+
+    // Bind Parametrs
+    $stmt->bindParam(':id',$this->id);
+    
+    // Execute Query
+    if($stmt->execute())
+    {
+      return true;
+    }else{
+      printf('Error %s.\n',$stmt->error);
+      return false;
+    }
+    
 
   }
 
